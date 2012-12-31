@@ -1,0 +1,25 @@
+﻿@{
+    
+    var db= Database.Open("Shopping");
+    var Query = "Select * from Products ";
+    int data = -1;
+    if ( UrlData.Count > 0)
+    {
+        Query += " where Category=@0";
+        data = Convert.ToInt32(UrlData[0]);
+    }
+    var rows = db.Query(Query,data);
+    
+
+    }
+
+<div class='span8 offset2 floatShadow well bgwhite' style="text-align:center">
+    <h3 style="text-align:center"> Details</h3>
+
+    @foreach (var item in rows)
+    {
+        <text>
+        @WriteHelpers.WriteProduct(@"/Images/small/" +item.Image, item.Name, Convert.ToString(item.Id))
+    </text>
+    }
+    </div>

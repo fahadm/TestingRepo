@@ -1,0 +1,66 @@
+@{
+
+    Layout = "Shared/Layout.cshtml";
+
+    var db = Database.Open("Shopping");
+    var query = "select * from Products";
+    var res = db.Query(query);
+    
+    
+    
+
+       
+}
+
+
+
+<div class="row-fluid">
+    <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+
+
+            <li><a href="\Category">Catergories</a></li>
+
+            @foreach (var item in ((List<SelectListItem>)AppState["List"]))
+            {
+                <text>
+                <li><a href="#@item.Value" data-toggle="tab">@item.Text</a></li>
+                </text>
+            }
+
+        </ul>
+        <div class="tab-content floatShadow well bgwhite">
+            <div class="tab-pane active" id="home">
+                <p>Welcome to this site, This site is pretty awesome. This is the main page of awesomeness</p>
+            </div>
+
+            @foreach (var item in ((List<SelectListItem>)AppState["List"]))
+            {
+                <text>
+                <div class="tab-pane " id="@item.Value">
+                    <h3 style="text-align: center">@item.Text</h3>
+                </div>
+                </text>
+            }
+
+            @*   <div class="tab-pane " id="1">
+                               
+            </div>*@
+        </div>
+    </div>
+</div>
+@foreach (var item in res)
+{
+    <text>
+    <script>
+        var str = "@WriteHelpers.WriteProduct(@"/Images/small/" + item.Image, item.Name, Convert.ToString(item.Id))";
+
+        $(str).appendTo('#@item.Category');
+                                 
+
+    </script>
+    </text>
+ //   Response.Write("Product Written");
+
+
+}

@@ -1,0 +1,49 @@
+﻿@{
+    if ( IsPost && WebSecurity.IsAuthenticated && Roles.IsUserInRole("Admin"))
+    {
+
+        var db = Database.Open("shopping");
+        int n=db.Execute("update from Category set name = @0 where name=@1",Convert.ToString(Request["catNamenew"]),Convert.ToString(Request["catName"]));
+            if ( n>0)
+            {
+                <text>
+            Successfully Updated Category
+</text>
+    
+    
+                
+                var rows = db.Query("select * from Category order by Id ");
+
+                List<SelectListItem> Lsi = new List<SelectListItem>();
+                foreach (var item in rows)
+                {
+
+
+                    SelectListItem SlItems = new SelectListItem();
+                    SlItems.Text = item.Name;
+                    SlItems.Value = Convert.ToString(item.Id);
+                    Lsi.Add(SlItems);
+
+                }
+
+                AppState["List"] = Lsi;
+            }
+    }
+    
+}
+
+
+<form action="#" method="post" enctype="multipart/form-data">
+    <div>
+        <div class="row-fluid">
+        <div class=" offset4 span2">Enter Category Name To update</div>
+        <div class="span4">@Html.TextBox("catName")</div>
+            </div>
+        <div class="row-fluid">
+        <div class=" offset4 span2">Enter new Category Name</div>
+        <div class="span4">@Html.TextBox("catNameNew")</div>
+            </div>
+
+        <button class="btn btn-info" >Updated</button>
+    </div>
+    </form>

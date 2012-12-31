@@ -1,0 +1,63 @@
+﻿@{
+   // Layout = "~/_SiteLayout.cshtml";
+    //Page.Title = "Checkout | SSSSS";
+
+    string postUrl = "https://www.sandbox.paypal.com/cgi-bin/webscr";
+    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(postUrl);
+    
+    //Set values for the request back
+    req.Method = "POST";
+    req.ContentType = "application/x-www-form-urlencoded";
+    byte[] param = Request.BinaryRead(HttpContext.Current.Request.ContentLength);
+    string strRequest = System.Text.Encoding.UTF8.GetString(param);
+    string ipnPost = strRequest;
+    strRequest += "&cmd=_notify-validate";
+    req.ContentLength = strRequest.Length;
+
+    //for proxy
+    //WebProxy proxy = new WebProxy(new Uri("http://url:port#"));
+    //req.Proxy = proxy;
+
+    //Send the request to PayPal and get the response
+    StreamWriter streamOut = new StreamWriter(req.GetRequestStream(), 
+                             System.Text.Encoding.UTF8);
+    streamOut.Write(strRequest);
+
+    streamOut.Close();
+
+    StreamReader streamIn = new StreamReader(req.GetResponse().GetResponseStream());
+    string strResponse = streamIn.ReadToEnd();
+    streamIn.Close();
+
+    /*/ logging ipn messages... be sure that you give write
+    // permission to process executing this code
+    string logPathDir = ResolveUrl("Messages");
+    string logPath = string.Format("{0}\\{1}.txt", 
+                     Server.MapPath(logPathDir), DateTime.Now.Ticks);
+    File.WriteAllText(logPath, ipnPost);
+    /*/
+
+}
+@if (strResponse == "VERIFIED")
+{
+    /*---------------- WILL DO OTHER CHECKS LATER    ------------------*/
+    //check the payment_status is Completed
+    <p>status is verified</p>
+    //check that txn_id has not been previously processed
+    //check that receiver_email is your Primary PayPal email
+    //check that payment_amount/payment_currency are correct
+    //process payment
+}
+else if (strResponse == "INVALID")
+{
+    //log for manual investigation
+    <p>status is invalid.</p>
+
+<p>@ipnPost</p>
+}
+else
+{
+    //log response/ipn data for manual investigation
+    <p>status is valid.</p>
+<p>@ipnPost</p>
+}

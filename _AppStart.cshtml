@@ -1,0 +1,86 @@
+﻿@{
+    //WebSecurity.InitializeDatabaseConnection("StarterSite", "UserProfile", "UserId", "Email", autoCreateTables: true);
+
+    var db = Database.Open("shopping");
+    var rows=db.Query("select * from Category order by Id ");
+    
+    List<SelectListItem> Lsi= new List<SelectListItem> ();
+    foreach (var item in rows)
+	{
+        
+        
+        SelectListItem SlItems= new SelectListItem();
+        SlItems.Text = item.Name;
+        SlItems.Value= Convert.ToString( item.Id);
+        Lsi.Add(SlItems);
+		 
+	}
+
+    AppState["List"] = Lsi;
+
+    WebSecurity.InitializeDatabaseConnection("Accounts", "Users", "UserId", "UserName",true);
+    
+    
+    
+    if (!WebSecurity.UserExists("Administrator"))
+    {
+        WebSecurity.CreateUserAndAccount("Administrator", "admin");
+    }
+        
+    if (!Roles.RoleExists("Admin"))
+    {
+    Roles.CreateRole("Admin");
+    }
+    if (!Roles.IsUserInRole("Administrator", "Admin"))
+    {
+        Roles.AddUserToRole("Administrator", "Admin");
+    }
+
+    
+    PayPal.Profile.Initialize(
+            "protom_1356535112_biz_api1.gmail.com",
+            "1356535133",
+            "An5ns1Kso7MWUdW4ErQKJJJ4qi4-AY3hjsyrb.HUImrIWKYdCA1.pLF7",
+            "sandbox");
+
+    // General Adaptive Payments’ properties
+    PayPal.Profile.Language = "en_US";
+    PayPal.Profile.ReturnUrl="http://localhost:21503/cart/Checkout.cshtml";
+    
+    PayPal.Profile.CurrencyCode = "USD";
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // To let users of this site log in using their accounts from other sites such as Microsoft, Facebook, Twitter,
+    // you must update this site. For more information visit http://go.microsoft.com/fwlink/?LinkID=226949
+
+    //OAuthWebSecurity.RegisterMicrosoftClient(
+    //    clientId: "",
+    //    clientSecret: "");
+
+    //OAuthWebSecurity.RegisterTwitterClient(
+    //    consumerKey: "",
+    //    consumerSecret: "");
+
+    //OAuthWebSecurity.RegisterFacebookClient(
+    //    appId: "",
+    //    appSecret: "");
+
+    //OAuthWebSecurity.RegisterGoogleClient();
+
+    //WebMail.SmtpServer = "mailserver.example.com";
+    //WebMail.EnableSsl = true;
+    //WebMail.UserName = "username@example.com";
+    //WebMail.Password = "your-password";
+    //WebMail.From = "your-name-here@example.com";
+
+    // To learn how to optimize scripts and stylesheets in your site go to http://go.microsoft.com/fwlink/?LinkID=248973
+}

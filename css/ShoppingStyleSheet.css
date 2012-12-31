@@ -1,0 +1,55 @@
+﻿body {
+}
+.footer
+{
+    background-color:black;
+    color:white;
+}
+.bgwhite
+{
+    background-color:white;
+}
+.floatMenu {  
+    
+    
+    
+    list-style-type :none;
+
+}
+
+.floatShadow
+{
+ 
+-moz-box-shadow: 10px 10px 5px #888;
+-webkit-box-shadow: 10px 10px 5px #888;
+box-shadow: 10px 10px 5px #888;
+
+}
+
+.search_special {
+    padding-left: 1px;
+border-style: solid;
+border-color: black;
+border-width: 1px;
+font-family: helvetica, arial, sans serif;
+padding-left: 1px;
+}
+
+.btn-custom { /* Extension to twitter bootstrap*/
+  background-color: hsl(201, 87%, 30%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#10a0ee", endColorstr="#09608f");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#10a0ee), to(#09608f));
+  background-image: -moz-linear-gradient(top, #10a0ee, #09608f);
+  background-image: -ms-linear-gradient(top, #10a0ee, #09608f);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #10a0ee), color-stop(100%, #09608f));
+  background-image: -webkit-linear-gradient(top, #10a0ee, #09608f);
+  background-image: -o-linear-gradient(top, #10a0ee, #09608f);
+  background-image: linear-gradient(#10a0ee, #09608f);
+  border-color: #09608f #09608f hsl(201, 87%, 25%);
+  color: #fff !important;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33);
+  -webkit-font-smoothing: antialiased;
+  width:200px;
+   
+}

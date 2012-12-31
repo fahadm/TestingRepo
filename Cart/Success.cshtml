@@ -1,0 +1,18 @@
+﻿@{
+    Layout = @"~\shared\layout.cshtml";
+    if ( !WebSecurity.IsAuthenticated || UrlData.Count<=0)
+    {
+        Response.Redirect(@"~\");
+    }   
+}
+<div class="row-fluid floatShadow well bgwhite">
+    <h3 style="text-align:center"> Checkout</h3>
+    <div class="row-fluid">
+        
+       <h5> Order Successfully posted</h5> 
+       Order Id = @UrlData[0]
+                  
+       
+
+    </div>
+</div>

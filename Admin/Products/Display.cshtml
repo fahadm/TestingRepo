@@ -1,0 +1,46 @@
+﻿@{
+    var db = Database.Open("Shopping");
+
+    var res = db.Query("Select * from Products");
+    int index=0;
+ 
+}
+
+<div class='span8 offset2 floatShadow well bgwhite' style="text-align: center">
+    <table border="1">
+        <tr>
+            
+            <td>Id</td>
+            <td>Name</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Description</td>
+            <td>ImageName</td>
+            <td>Category</td>
+
+
+
+        </tr>
+        @foreach (var item in res)
+        {
+            <text>
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Description.Substring(0,10) +"..." )</td>
+                <td>@item.Image</td>
+                @(index= Convert.ToInt32(item.Category))
+                <td>@( ((List<SelectListItem>) (AppState["List"]) ) [index-1].Text)</td>
+            </tr>
+
+            </text>
+            
+        }
+
+
+    </table>
+
+
+</div>

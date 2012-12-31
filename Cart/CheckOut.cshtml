@@ -1,0 +1,46 @@
+﻿  
+    @{
+    if (!IsPost) {
+        Response.Redirect("~/Cart/View");
+    }
+    
+    var db = Database.Open("Accounts");
+    
+    var orderShipping = db.QueryValue("select address from Users where UserId= @0",WebSecurity.CurrentUserId);
+    var customerEmail = Request["email"];
+    
+    var hostUrl = Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped) + Request.ApplicationPath;
+    var cancelUrl = hostUrl + "Cart/Cancel/"+Session["CurrentSale"].ToString() ;
+    var IpnUrl = hostUrl + "cart/Notification";
+    var returnUrl = hostUrl + "cart/Success/" + Session["CurrentSale"].ToString();
+    
+     //Enter the email of the receiver 
+    var receiver = "protom_1356535112_biz@gmail.com"; 
+    
+    var amount = Request.Form["sum"].AsDecimal();
+    var sender = customerEmail;
+    
+    var response = PayPal.AdaptivePayments.SimplePay.Execute
+                    (receiver, amount, sender, string.Format("OrderNo {0} -FastShop ",Request["ID"].AsInt()), "127.0.0.1", "Test Device",cancelUrl,returnUrl,IpnUrl);  
+    if (response.paymentExecStatus=="CREATED")
+    {
+        var db2 = Database.Open("shopping");
+        
+        db2.Execute("update SALE set Status='ordered' where SALEID=@0 ",Session["CurrentSale"]);
+                    Session["CurrentSale"]=-1;
+    }
+    response.Redirect();
+}
+    
+
+<div class="row-fluid floatShadow well bgwhite">
+    <h3 style="text-align:center"> Checkout</h3>
+    <div class="row-fluid">
+        
+       <h5> Order Successfully posted</h5> 
+       
+                  
+       
+
+    </div>
+</div>

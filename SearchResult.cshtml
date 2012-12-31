@@ -1,0 +1,120 @@
+﻿@{
+    
+    IEnumerable<dynamic> Rows = new List<dynamic>();
+    if (IsPost)
+    {
+        var db = Database.Open("Shopping");
+        string Query;
+        string Parameter = Request["searchTerm"].ToLower();
+        if (Request["selected"] == "Name")
+        {
+            Parameter = "%" + Parameter + "%";
+            Query = "select * from Products where LOWER(Name) Like @0";
+            Rows = db.Query(Query, Parameter);
+
+        }
+        else if (Request["selected"] == "Category" )
+        {
+            if (Request["Lst"] != null)
+            {
+                Query = "Select * from products where LOWER(Name) Like @0 and Category = @1";
+                Parameter = "%" + Parameter + "%";
+                Rows = db.Query(Query, Parameter,Request["Lst"]);
+            }
+            else 
+            {
+                Query = "select * from Products as Pd LEFT JOIN Category as Ct ON Pd.Category= Ct.Id where Ct.Name=@0 ";
+                Rows = db.Query(Query, Parameter);
+            }
+
+        }
+        else if ( Request["selected"] == "Price" )
+        {
+            Parameter = "%" + Parameter + "%";
+            Query = "Select * from products where  LOWER(Name) Like @0 and price between @1 and @2 ";
+            Rows = db.Query(Query, Parameter, Convert.ToSingle(Request["Min"]), Convert.ToSingle(Request["Max"]));   
+        }
+
+        
+
+    }
+    
+    
+}
+<div class="row-fluid center floatShadow well bgwhite">
+    <form action="~/SearchResult" method="post">
+        <h6>Advance Search</h6>
+        <div class="span6 offset4">
+            <div class="row-fluid">
+                <div class="span4">
+                    Enter Your Keyword :
+                </div>
+                <div class="span4">
+                    <input id="search" name="searchTerm" class="search_special" type="text" placeholder="Type something…" />
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span4">Select how you want to search:</div>
+                <div class="span4">
+                    <select id="Sel" name="selected">
+
+                        <option>Name</option>
+                        <option>Category</option>
+                        <option>Price</option>
+                    </select>
+                </div>
+            </div>
+       
+            <div class="row-fluid" id="spc">
+                <div class="span4">Select The Category from which you want to search</div>
+                <div class="span4">@Html.DropDownList("Lst", (List<SelectListItem>)AppState["List"])</div>
+            </div>
+
+            <div class="row-fluid" id="prc">
+                <div class="span4">Enter Price Range</div>
+                <div class="span4">Min @Html.TextBox("Min") </div>
+                <div class="span4">Max  @Html.TextBox("Max") </div>
+            </div>
+
+            <div class="row-fluid">
+                <button class="btn btn-info"><i class="icon-white icon-search"></i>Search </button>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div class="row-fluid span6 offset2">
+    <div class="row-fluid">
+        Results:
+    </div>
+    <div class="row-fluid">
+        @foreach (var item in Rows)
+        {
+            <text>@WriteHelpers.WriteRowProduct(@"/Images/small/" + item.Image, item.Name, (Convert.ToString(item.Id)),Convert.ToString(item.Price))</text>
+        }
+    </div>
+</div>
+     <script>
+                
+         $('#spc').hide();
+         $('#prc').hide();
+         $('#srchFrm').remove();
+                $("#Sel").change(function () {
+                    if ($(this).val() == "Category") {
+                        $('#spc').fadeIn('slow');
+                    }
+                    else
+                        $('#spc').fadeOut('slow');
+
+
+                    if ($(this).val() == "Price") {
+                        $('#prc').fadeIn('slow');
+                    }
+                    else
+                        $('#prc').fadeOut('slow');
+
+
+                });
+                
+                
+            </script>

@@ -1,0 +1,87 @@
+﻿@using Microsoft.Web.Helpers;
+
+@{
+    
+    Validation.Add("name",new [] {Validator.Required("Name is Required")});
+    Validation.Add("qty", new[] { Validator.Required("Quantity is Required"), Validator.Integer("Input should be integer") });
+    Validation.Add("price", new[] { Validator.Required("Price is Required"),Validator.Float("Only decimal values allowed") });
+    if (WebSecurity.IsAuthenticated &&  Roles.IsUserInRole("Admin"))
+    {
+        //Everything is ok
+        
+        if (IsPost && Validation.IsValid())
+        {
+            string filename = Request.Files[0].FileName.Split('.')[0] ;
+            
+            WebImage wi = new WebImage(Request.Files[0].InputStream);
+            
+            wi.Save(@"~\Images\large\" + filename,"png");
+            wi.Resize(157,157,false);
+            
+            wi.Save(@"~\Images\small\" +filename,"png");
+            var db = Database.Open("shopping");
+
+            db.Execute("insert into Products(Name,Price,Quantity,Description,Image,Category) values(@0,@1,@2,@3,@4,@5)", Request.Form["name"].ToString(), Request["price"].ToString(), Request["qty"].ToString(), Request["desc"].ToString(), filename+".png",Request["category"]);
+         
+            
+        }
+        
+    }
+    else
+    {
+        <text> Forbidden</text>
+    }
+    
+    
+}
+<form action="#" method="post" enctype="multipart/form-data">  
+<div class="row-fluid ">
+
+    
+    <div class="span4 offset2" style="text-align: center">Item Name </div>
+    <div class="span4" style="text-align: left">
+        <input type="text" name="name" placeholder="Text input" @Validation.For("name") >@Html.ValidationMessage("name")
+    </div>
+    </div>
+<div class="row-fluid ">
+    <div class="span4 offset2" style="text-align: center">Item Category </div>
+    <div class="span4" style="text-align: left">
+    
+    @Html.DropDownList("category",(List<SelectListItem>)AppState["List"]);
+    
+    </div>
+
+    <div class="row-fluid ">
+    <div class="span4 offset2" style="text-align: center">Item Quantity</div>
+    <div class="span4" style="text-align: left">
+        <input type="text" name="qty" placeholder="Text input" @Validation.For("qty")>@Html.ValidationMessage("qty")</div>
+    </div>
+<div class="row-fluid ">
+    <div class="span4 offset2" style="text-align: center" >Item Price</div>
+    <div class="span4" style="text-align: left">
+        <input type="text" name="price" placeholder="Text input" @Validation.For("price")>@Html.ValidationMessage("price")</div>
+    </div>
+
+<div class="row-fluid ">
+    <div class="span4 offset2" style="text-align: center">Item Image</div>
+    <div class="span4" style="text-align: left">
+        @FileUpload.GetHtml("FileName", 1, false, false)
+    </div>
+
+    </div>
+<div class="row-fluid ">
+
+    <div class="span4 offset2" style="text-align: center">Item description  </div>
+    <div class="span4" style="text-align: left">
+        <textarea name="desc" placeholder="Enter Description here"></textarea>
+
+    </div>
+
+</div>
+    </form>
+<div class="row-fluid " style="text-align:center">
+    <button type="submit" class="btn btn-info"><i class="icon-white icon-plus"></i>Add </button>
+
+
+    </div>
+    

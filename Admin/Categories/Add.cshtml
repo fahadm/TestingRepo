@@ -1,0 +1,78 @@
+﻿@using Microsoft.Web.Helpers;
+
+@{
+    
+    Validation.Add("name",new []{Validator.Required("Name is required")});
+    if (WebSecurity.IsAuthenticated && Roles.IsUserInRole("Admin"))
+    {
+        //Everything is ok
+
+        if (IsPost)
+        {
+            string filename = Request.Files[0].FileName.Split('.')[0];
+
+            WebImage wi = new WebImage(Request.Files[0].InputStream);
+
+            wi.Save(@"~\Images\large\" + filename, "png");
+            wi.Resize(157, 157, false);
+
+            wi.Save(@"~\Images\small\" + filename , "png");
+            var db = Database.Open("shopping");
+            int id = db.QueryValue("Select count(*) from Category ");
+            
+            db.Execute("insert into Category(Id,Name,Image) values(@0,@1,@2)", id,Request.Form["name"].ToString(), filename + ".png");
+
+            
+            var rows = db.Query("select * from Category order by Id ");
+
+            List<SelectListItem> Lsi = new List<SelectListItem>();
+            foreach (var item in rows)
+            {
+
+
+                SelectListItem SlItems = new SelectListItem();
+                SlItems.Text = item.Name;
+                SlItems.Value = Convert.ToString(item.Id);
+                Lsi.Add(SlItems);
+
+            }
+
+            AppState["List"] = Lsi;
+            
+
+        }
+
+    }
+    else
+    {
+    <text> Forbidden</text>
+        Response.Redirect("~/");
+    }
+}
+<form action="#" method="post" enctype="multipart/form-data">
+    <div class="row-fluid ">
+
+
+        <div class="span4 offset2" style="text-align: center">Category Name </div>
+        <div class="span4" style="text-align: left">
+            <input type="text" name="name" placeholder="Text input" @Validation.For("name")>@Html.ValidationMessage("name")
+        </div>
+    </div>
+    
+        
+        <div class="row-fluid ">
+            <div class="span4 offset2" style="text-align: center">Category Image</div>
+            <div class="span4" style="text-align: left">
+                @FileUpload.GetHtml("FileName", 1, false, false)
+            </div>
+
+        </div>
+    <div class="row-fluid " style="text-align: center">
+    <button type="submit" class="btn btn-info"><i class="icon-white icon-plus"></i>Add </button>
+
+
+</div>
+
+        
+</form>
+

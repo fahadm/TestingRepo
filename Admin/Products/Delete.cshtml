@@ -1,0 +1,82 @@
+﻿@{
+    var db = Database.Open("Shopping");
+
+    var res = db.Query("Select * from Products");
+    int index=0;
+ if (IsPost)
+ {
+     db.QuerySingle("Delete from products where id=@0", Request["Output"]);
+     
+ }
+}
+
+<div class='span8 offset2 floatShadow well bgwhite' style="text-align: center">
+
+    
+    <table border="1">
+        <tr>
+            
+            <td>Id</td>
+            <td>Name</td>
+            <td>Price</td>
+            <td>Quantity</td>
+            <td>Description</td>
+            <td>ImageName</td>
+            <td>Category</td>
+
+
+
+        </tr>
+        @foreach (var item in res)
+        {
+            <text>
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Description.Substring(0,10) +"..." )</td>
+                <td>@item.Image</td>
+                @(index= Convert.ToInt32(item.Category))
+                <td>@( ((List<SelectListItem>) (AppState["List"]) ) [index-1].Text)</td>
+                        <td>
+                            <input type="button" id ="@item.Id" name="Delete" value="x" title="delete"   />
+
+                        </td>
+            </tr>
+
+
+        
+            </text>
+            
+        }
+
+
+    </table>
+    
+    
+</div>
+<script>
+    
+    $("input").each(function(){ 
+        if ($(this).val()=="x")
+        {
+            $(this).click(f1);
+            
+        }
+        
+    });
+    function f1(e) {
+  
+        alert(this.getAttribute('id'));      
+        var v = $("<form>", { method: "post", action: "#" });
+        $("<input>", { name: "Output" }).appendTo($(v)).val(this.getAttribute('id'));
+
+
+        $(v).appendTo(document.body);
+        $(v).submit();
+
+        
+
+    }
+</script>

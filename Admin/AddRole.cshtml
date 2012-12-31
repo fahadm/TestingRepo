@@ -1,0 +1,54 @@
+﻿@{
+    
+    if (WebSecurity.IsAuthenticated && Roles.IsUserInRole("Admin"))
+    {
+        if (IsPost)
+        {
+
+
+            Roles.AddUsersToRole( new[] {Convert.ToString(Request["username"])}, "Admin");
+            
+        }
+        
+    }
+    else
+    {
+        Response.Redirect(@"~\");
+    }
+}
+
+
+<div class="row-fluid">
+    <div class="span8 " style="float: right">
+
+
+        <form method="post" action="#">
+            <table>
+
+
+                <tr>
+                    <td><b>Username</b> </td>
+                    <td>@Html.TextBox("username") </td>
+
+                </tr>
+                <tr>
+                    <td><b>Role</b> </td>
+                    
+                    <td><select name="Role">
+                            <option  > Admin</option>
+
+                        </select></td>
+                </tr>
+            </table>
+
+            <div class="span2">
+                <button type="submit" class="btn btn-info"><i class="icon-white icon-plus"></i>Change</button>
+            </div>
+            <div class="span2">
+                <button type="reset" class="btn btn-info"><i class="icon-white icon-plus"></i>Reset</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>

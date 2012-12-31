@@ -1,0 +1,65 @@
+﻿@using Microsoft.Web.Helpers; 
+<div class='navbar' id="BottomNavBar">
+      <div class='navbar-inner'>
+        <div class='container'>
+           <ul class='nav'>
+            <li>
+              <a class='active' href='/'>About</a>
+            </li>
+            <li>
+              <a href='/'>Contact</a>
+            </li>
+           <li style="text-align:right">
+                   @Facebook.LikeButton(Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped) + Request.ApplicationPath);
+               </li>    
+          </ul>
+          
+        </div>
+      </div>
+    </div>
+
+@* Awesome plugin to make a floating top menu nav bar *@
+
+<script>
+    $(function () {
+        // Stick the #nav to the top of the window
+        var nav = $('#TopNavigationBar');
+        var navHomeY = nav.offset().top;
+        var isFixed = false;
+        var $w = $(window);
+        $.ready()
+        {
+            $('#TopNavigationBar').offset({ left: 0,right:$w.width() });
+            $('#BottomNavBar').offset({ left: 0, right: $w.width() });
+
+
+        }
+        $w.resize(function () {
+            $('#TopNavigationBar').width($w.width());
+            $('#TopNavigationBar').offset({ left: 0 });
+            $('#BottomNavBar').offset({ left: 0 });
+//            alert($w.width());
+
+        });
+        $w.scroll(function () {
+            
+            var scrollTop = $w.scrollTop();
+            var shouldBeFixed = scrollTop+20 > navHomeY;
+            if (shouldBeFixed && !isFixed) {
+                nav.css({
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: nav.width()
+                });
+                isFixed = true;
+            }
+            else if (!shouldBeFixed && isFixed) {
+                nav.css({
+                    position: 'static'
+                });
+                isFixed = false;
+            }
+        });
+    });
+    </script>
